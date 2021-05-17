@@ -3,7 +3,7 @@
 import random
 import time
 
-# Replace RPG starter project with this code when new instructions are live
+
 class Police:
     def __init__(self,inventory,hit_rate):
         self.hp = 100
@@ -11,6 +11,10 @@ class Police:
         self.hit_rate = hit_rate
     def is_dead(self):
         return self.hp<=0
+    
+    def recover(self):
+        self.hp += 60
+        self.inventory.remove('health pack')
 
     def attack(self,terrorist,weapon):
         if weapon == 'm16':
@@ -99,21 +103,27 @@ def display_item(items):
 
 #combat mode
 def combat(police,terrorist):
-    #print('combatting')
+    
     while True:
 
-        show_combat_status(police,terrorist)    
+        show_combat_status(police,terrorist)   
+       
         if police.negotiate(terrorist):
             print('Terrorist is persuaded. Hostages are rescued. Misson Success!')
             break
         else:
             print('negotiation failed')
+
             weapon = input(f'What do you want to use? {police.inventory}\n>')
+            
             police.attack(terrorist, weapon)
+
             if terrorist.is_dead():
                 print('Terrorist is elimnated. Mission Success!')
                 break
+
             terrorist.attack(police)
+
             if police.is_dead():
                 print('You are killed by terrorist. Mission failed')
                 break
@@ -168,7 +178,7 @@ def main():
 
     #initialize police and terrorist
     police = Police(inventory,0.8)
-    terrorist = Terrorist('insane',0.2)
+    terrorist = Terrorist('insane',0.6)
     showInstructions()
     #loop forever
     while True:
@@ -183,8 +193,7 @@ def main():
         if police.is_dead():
             print('Game over')
             break
-        if terrorist.is_dead():
-            del rooms[currentRoom]['items']
+        
         #get the player's next 'move'
         #.split() breaks it up into an list array
         #eg typing 'go east' would give the list:
